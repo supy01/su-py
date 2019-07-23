@@ -1,0 +1,107 @@
+#include <stdio.h>//在01背包问题回溯法的基础上改的代码，首个约束属性就是01背包问题的重量，在此基础上增加约束，符合全部的约束条件就放，不符合就不放。
+
+int n,m;//物品数量和约束数
+int j,d,k;//数组标识符，用于标识数组
+double c[100];//各个约束属性的约束属性值
+double v[100];//各个物品的价值
+double w[100];//首个约束属性值
+double x[100][100];//保存其他各个约束属性的属性值
+double cw = 0.0;//当前首个约束的属性值
+double cx[100];//当前其他约束的属性值
+double cp = 0.0;//当前物品总价值
+double bestp = 0.0;//当前最优价值
+
+//回溯函数
+void backtrack(int i)
+{   //i用来指示到达的层数（第几步，从0开始），同时也指示当前选择玩了几个物品
+	for(k=1;k<m;k++){
+		  cx[k]=0;}//给当前各个属性值赋初值
+    double bound(int i);
+    if(i>n) //递归结束的判定条件
+    {
+        bestp = cp;
+        return;
+    }
+    //如若左子节点可行，则直接搜索左子树;
+    //对于右子树，先计算上界函数，以判断是否将其减去	
+    if(cw+w[i]<=c[1]&&cx[1]+x[i][1]<=c[2]&&cx[2]+x[i][2]<=c[3]&&cx[3]+x[i][3]<=c[4]&&cx[4]+x[i][4]<=c[5]&&cx[5]+x[i][5]<=c[6]&&cx[6]+x[i][6]<=c[7]&&cx[7]+x[i][7]<=c[8]&&cx[8]+x[i][8]<=c[9]&&cx[9]+x[i][9]<=c[10]){//判断当前各个约束条件是否满足			
+		//将物品i放入背包,搜索左子树
+        cw+=w[i];//同步更新当前首个约束属性的属性值
+		for(j=1;j<m;j++){
+			cx[j]+=x[i][j];
+		}//同步更新背包的各个约束属性的属性值
+        cp+=v[i];//同步更新当前背包的总价值
+        backtrack(i+1);//深度搜索进入下一层
+        cw-=w[i];//回溯复原
+		for(j=1;j<m;j++){
+			cx[j]-=x[i][j];}//回溯复原
+        cp-=v[i];//回溯复原
+   
+}
+    if(bound(i+1)>bestp)//如若符合条件则搜索右子树
+        backtrack(i+1);
+}
+							
+//计算上界函数，功能为剪枝
+double bound(int i)
+{		
+   //判断当前背包的总价值cp＋剩余容量可容纳的最大价值<=当前最优价值
+    double leftw= c[1]-cw;//第一个约束剩余的属性值
+    double b = cp;//记录当前背包的总价值cp,最后求上界
+	double leftw1=c[2]-cx[1];
+	double leftw2=c[3]-cx[2];
+	double leftw3=c[4]-cx[3];
+	double leftw4=c[5]-cx[4];
+	double leftw5=c[6]-cx[5];
+	double leftw6=c[7]-cx[6];
+	double leftw7=c[8]-cx[7];
+	double leftw8=c[9]-cx[8];
+	double leftw9=c[10]-cx[9];//其他约束属性剩余的属性值
+    while(i<=n && w[i]<=leftw && x[i][1]<=leftw1 && x[i][2]<=leftw2 && x[i][3]<=leftw3 && x[i][4]<=leftw4 &&  x[i][5]<=leftw5 && x[i][6]<=leftw6 && x[i][7]<=leftw7 && x[i][8]<=leftw8 &&  x[i][9]<=leftw9){//条件判断，若全部条件符合则往下运行
+        leftw-=w[i];//更新剩余的属性值
+        leftw1-=x[i][1];
+		leftw2-=x[i][2];
+		leftw3-=x[i][3];
+		leftw4-=x[i][4];
+	    leftw5-=x[i][5];
+	    leftw6-=x[i][6];
+		leftw7-=x[i][7];
+		leftw8-=x[i][8];
+		leftw9-=x[i][9];
+        b+=v[i];
+        i++;
+    }//装满背包
+    if(i<=n)
+        b+=v[i]*(leftw+leftw1+leftw2+leftw3+leftw4+leftw5+leftw6+leftw7+leftw8+leftw9)/(w[i]+x[i][1]+x[i][2]+x[i][3]+x[i][4]+x[i][5]+x[i][6]+x[i][7]+x[i][8]+x[i][9]);
+    return b;//返回计算出的上界
+}
+
+
+int main()
+{
+    int i;
+    printf("请输入物品的数量和约束数：");
+    scanf("%d%d",&n,&m);
+    
+    printf("请依次输入每个物品的价值:\n",n);
+    for(i=1;i<=n;i++){
+        scanf("%d",&v[i]);
+    }
+    printf("请输入首个约束属性的属性值:\n",n);
+    for(i=1;i<=n;i++){
+        scanf("%d",&w[i]);
+    }
+    printf("请依次输入剩余约束属性的属性值:\n",n,m);
+    for(i=1;i<=n;i++){
+    for(j=1;j<m;j++){
+        scanf("%d",&x[i][j]);
+    }
+	}
+    printf("请输入每个约束属性的约束属性值：\n",n);
+    for(d=1;d<=m;d++){				              
+	scanf("%d",&c[d]);
+	}
+    backtrack(1);
+    printf("最优的价值为：%d\n",bestp);
+    
+}
